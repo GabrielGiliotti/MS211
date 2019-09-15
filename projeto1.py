@@ -50,7 +50,7 @@ plt.show()
 
 print("###############################################################################################################################")
 # Item b) a partir daqui.
-print("Item b) Implementacao dos metodos numericos Bisseccao --> (Metodo1) e Newton --> (Metodo2)\n")
+print("Item b) Implementacao dos metodos numericos Bisseccao e Newton\n")
 print("A funcao f(x) e o intervalo ja temos do item anterior.")
 print("Insira entao a tolerancia desejada e um numero maximo de iteracoes que o algoritmo pode realizar:\n")
 
@@ -59,29 +59,34 @@ imaxi = int(input("Valor do numero maximo de iteracoes: "))
 print()
 
 # defini uma funcao para que possa ser chamada posteriormente (item c))
-def bisseccao(z1,z2,tole,imax):
-	i = 1	
-	while( i <= imax ): # loop para iteracoes
+def bisseccao(z1,z2,tole,imax):		
+	funz1 = (mt.exp(z1*a) - mt.exp((a-1)*z1) - b) #funcao funz1 = f(z1)
+	funz2 = (mt.exp(z2*a) - mt.exp((a-1)*z2) - b) #funcao funz1 = f(z1)
+	if(funz1*funz2 < 0): 
+		i = 1
 		pmedio = (z1 + z2)/2 # define o ponto medio para o metodo
-		func = (mt.exp(pmedio*a) - mt.exp((a-1)*pmedio) - b) #funcao func = f(pmedio) 
-		funz1 = (mt.exp(z1*a) - mt.exp((a-1)*z1) - b) #funcao funz1 = f(z1)
-		if( func == 0 or (z2 - z1)/2 < tol ): # Se f(pmedio) = 0 ou a tolerancia for menor que a estipulada
-			print("Raiz encontrada pelo metodo da bisseccao = " + str(pmedio)) # mostra a raiz definida pelo metodo segundo os parametros
-			return pmedio # retorna a raiz
-			break
-		i+=1 #incremento laco while, numero de iteracoes ate o numero max de iteracoes estipulado
-		if(funz1*func >= 0): # Se f(pmedio)*f(z1) >= 0, isto eh, se nao ha troca de sinal entra x1 e ponto medio
-			z1 = pmedio # entao o intervalo entre pmedio e z2 contem a raiz e z1 recebe o valor de pmedio --> novo intervalo [pmedio,z2]
-		else:	# caso contrario
-			z2 = pmedio # o intervalo entre pmedio e z1 contem a raiz e z2 recebe o valor de pmedio --> novo intervalo [z1,pmedio]
-	print("Raiz nao encontrada pelo metodo. Nada sera retornado.")
+		while( i <= imax ):		
+			funpmedio = (mt.exp(pmedio*a) - mt.exp((a-1)*pmedio) - b) #funcao func = f(pmedio)
+			if( funpmedio == 0 or (z2-z1)/2 < tole ):			
+				return pmedio
+					
+			if( funz1*funpmedio < 0 ):
+				z2 = pmedio
+			else:
+				z1 = pmedio
+			pmedio = (z1+z2)/2
+			i += 1
+		return pmedio
+	else:
+		print("Nao ha raizes no intervalo ")	
+		#return None
+		
 
 
-bisseccao(x1,x2,tol,imaxi)
-if(flag == 1):
-	print("O resultado do algoritmo faz sentido, pois atende o teorema do item a)")
-elif(flag == 2):
-	print("O resultado do algoritmo NAO faz sentido, pois NAO atende o teorema do item a)")
+
+result = bisseccao(x1,x2,tol,imaxi)
+print("Raiz encontrada = " + str(result))
+
 	
 #Metodo de Newton : Erick
 
@@ -119,13 +124,22 @@ while(j < l):
 # Falta formatar os dados em formato tabela e corrigir alguns problemas de verificacao
 print()
 print(" #### Tabela da Bisseccao ####")
-print("| valor x1 | valor x2 | raiz encontrada para f(x) | Numero de iteracoes |")
+print("| valor x1  | valor x2  | raiz encontrada para f(x) | Numero de iteracoes |")
 for i in range(0,l):
-	#print("|{}|{}|{}|{}|".format(dTab[i][0],dTab[i][1],dTab[i][2],dTab[i][3]))
-	print("|    {}   |".format(dTab[i][0]), end="")
-	print("   {}   |".format(dTab[i][1]), end="")
-	print("         {0:.7f}           |".format(dTab[i][2]), end="")
-	print("         {}        |".format(dTab[i][3]))
+	if( flag == 2 ):
+		print("|  {}  |  {}  |  {}  |  {}  |".format(dTab[i][0],dTab[i][1],None,dTab[i][3]))
+	elif( flag == 1 ):
+		print("|  {}  |  {}  |  {}  |  {}  |".format(dTab[i][0],dTab[i][1],dTab[i][2],dTab[i][3]))
+	
+#	print("|    {""}   |".format(dTab[i][0]), end="")
+#	print("   {""}    |".format(dTab[i][1]), end="")
+#	if( dTab[i][2] < 0 ):
+#		print("         {}           |".format(None), end="")
+#	else:
+#		print("         {0:.7f}           |".format(dTab[i][2]), end="")
+#
+#
+#	print("         {}        |".format(dTab[i][3]))
 
 #Metodo de Newton : Erick
 
