@@ -104,7 +104,7 @@ print("Obs: Para todas as entradas que serao tabeladas, vamos tomar o a toleranc
 
 print("Defina aqui quantas linhas voce deseja em sua tabela: ")
 l = int(input())
-dadosTabela = []
+dTab = []
 j = 0
 while(j < l):
 	print("Insira na ordem: x1 intervalo, x2 intervalo e numero de iteracoes: ")	
@@ -113,14 +113,19 @@ while(j < l):
 	itera = int(input("valor do numero de iteracoes: "))
 	r = bisseccao(x11,x22,tol,itera)
 	li =[x11,x22,r,itera]
-	dadosTabela.append(li)	
+	dTab.append(li)	
 	j+=1	
 
 # Falta formatar os dados em formato tabela e corrigir alguns problemas de verificacao
-print(dadosTabela)
-
-
-
+print()
+print(" #### Tabela da Bisseccao ####")
+print("| valor x1 | valor x2 | raiz encontrada para f(x) | Numero de iteracoes |")
+for i in range(0,l):
+	#print("|{}|{}|{}|{}|".format(dTab[i][0],dTab[i][1],dTab[i][2],dTab[i][3]))
+	print("|    {}   |".format(dTab[i][0]), end="")
+	print("   {}   |".format(dTab[i][1]), end="")
+	print("         {0:.7f}           |".format(dTab[i][2]), end="")
+	print("         {}        |".format(dTab[i][3]))
 
 #Metodo de Newton : Erick
 
