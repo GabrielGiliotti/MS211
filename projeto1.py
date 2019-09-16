@@ -72,7 +72,7 @@ def numIterac(x1,x2,tol):
 	k = int(k)+1
 	return k
 
-# defini uma funcao para que possa ser chamada posteriormente (item c))
+# define uma funcao para que possa ser chamada posteriormente (item c))
 def bisseccao(z1,z2,tole,imax):		
 	funz1 = (mt.exp(z1*a) - mt.exp((a-1)*z1) - b) #funcao funz1 = f(z1)
 	funz2 = (mt.exp(z2*a) - mt.exp((a-1)*z2) - b) #funcao funz1 = f(z1)
@@ -99,27 +99,42 @@ imaxi = numIterac(x1,x2,tol)
 result = bisseccao(x1,x2,tol,imaxi)
 print("Raiz encontrada = " + str(result))
 print()	
-#Metodo de Newton : Erick
 
 
+#Metodo de Newton
 
+def newton(x0, tole, imax):
+	funcX = (mt.exp(x0*a) - mt.exp((a-1)*x0) - b) #funcao 
+	funcXDer = ((a*mt.exp(a*x0)) - ((a-1)*mt.exp((a-1)*x0))) #derivada da funcao
 
+	x1 = (x0 - (funcX/funcXDer))  #g(x) ou x1
 
+	i = 0
+	while(i <= mt.sqrt(imax) ): 
+		if(abs((mt.exp(x0*a) - mt.exp((a-1)*x0) - b)) < tole): #criterio de parada
+			return (x0, i)	
+		elif(abs(x1 - x0) < tole): #criterio de parada
+			x0 = x1
+			x1 = (x0 - (mt.exp(x0*a) - mt.exp((a-1)*x0) - b)/((a*mt.exp(a*x0)) - ((a-1)*mt.exp((a-1)*x0))))
+			i += 1
+		else:
+			return None, None
+	return (x1, i)
 
-
-
-
-
+x0 = float(input("Valor de x0: "))
+result, nInt = newton(x0,tol,imaxi)
+print("Raiz encontrada = " + str(result))
+print()
 
 
 print("###############################################################################################################################\n")
 print("Item c) Encontrar raiz da equacao dada para diferentes pontos/intervalos iniciais e tabelar: ")
 print("Os intervalos passados [n1,n2], as aproximacoes das raizes e o numero de iteracoes.\n")
 
-print("Obs: Para todas as entradas que serao tabeladas, vamos tomar o a tolerancia utilizada no item b)\n")
+print("Obs: Para todas as entradas que serao tabeladas, vamos tomar a tolerancia utilizada no item b)\n")
 
 l = int(input("Defina aqui quantas linhas voce deseja em sua tabela: "))
-dTab = []
+dTabInter = []
 j = 0
 while(j < l):
 	print("Insira na ordem: x1 valor do intervalo e x2 valor do intervalo: ")	
@@ -127,8 +142,8 @@ while(j < l):
 	x22 = float(input("valor x2: "))
 	itera = numIterac(x11,x22,tol)
 	r = bisseccao(x11,x22,tol,itera)
-	li =[x11,x22,r,itera]
-	dTab.append(li)	
+	liInter =[x11,x22,r,itera]
+	dTabInter.append(liInter)	
 	j+=1	
 
 # Falta formatar os dados em formato tabela e corrigir alguns problemas de verificacao
@@ -136,20 +151,38 @@ print()
 print(" #### Tabela da Bisseccao ####")
 print("| valor x1  | valor x2  | raiz encontrada para f(x) | Numero de iteracoes |")
 for i in range(0,l):
-	print("|    {}    |".format(dTab[i][0]), end="")
-	print("   {}    |".format(dTab[i][1]), end="")
-	if( dTab[i][2] == None ):
+	print("|    {}    |".format(dTabInter[i][0]), end="")
+	print("   {}    |".format(dTabInter[i][1]), end="")
+	if( dTabInter[i][2] == None ):
 		print("           None            |", end="")
 	else:
-		print("         {0:.7f}           |".format(dTab[i][2]), end="")
+		print("         {0:.7f}           |".format(dTabInter[i][2]), end="")
 
 
-	print("         {}        |".format(dTab[i][3]))
+	print("         {}        |".format(dTabInter[i][3]))
 
 #Metodo de Newton : Erick
 
+dTabNewton = []
+j = 0
+while(j < l):
+	print("Insira na ordem: x1 valor do intervalo e x2 valor do intervalo: ")	
+	x0 = float(input("valor x0: "))
+	x1, nInt = newton(x0,tol,itera)
+	liNewton =[x0,x1,nInt]
+	dTabNewton.append(liNewton)	
+	j+=1	
 
-
+print()
+print(" #### Tabela de Newton ####")
+print("| valor x0 | raiz encontrada para f(x) | Numero de iteracoes |")
+for i in range(0,l):
+	print("|    {}    |".format(dTabNewton[i][0]), end="")
+	print("   {}    |".format(dTabNewton[i][1]), end="")
+	if( dTabNewton[i][2] == None ):
+		print("           None            |", end="")
+	else:
+		print("         {0:.7f}           |".format(dTabNewton[i][2]), end="")
 
 
 
