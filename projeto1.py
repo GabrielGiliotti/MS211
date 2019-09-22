@@ -23,17 +23,14 @@ print("Para analisar se o intervalo [x1,x2] contem pelo menos uma raiz da funcao
 print("Seja f(x) uma função contínua no intervalo [x1,x2].", end="")
 print("Se f(x1)*f(x2) < 0 (ou seja, f(x1) e f(x2) tem sinais contrários), então existe pelo menos uma raiz real de f no intervalo[x1,x2]\n")
 
-flag = 0
 a = 0.2 # considere que a eh alpha 
 b = 2.0 # considere que b eh beta
-f1 = mt.exp(x1*a) - mt.exp((a-1)*x1) - b
-f2 = mt.exp(x2*a) - mt.exp((a-1)*x2) - b
-if( f1*f2 < 0 ): 
-	print("O Intervalo escolhido apresenta pelo menos uma raiz segundo o teorema.\n")
-	flag = 1
+f1 = mt.exp(x1*a) - mt.exp((a-1)*x1) - b # f1 no caso eh o calculo de f(x1)
+f2 = mt.exp(x2*a) - mt.exp((a-1)*x2) - b # f2 idem f(x2)
+if( f1*f2 < 0 ):  # Verificação que faz as vezes do Teorema de Bolzano, onde verificamos se existe raiz no intervalo
+	print("O Intervalo escolhido apresenta pelo menos uma raiz segundo o teorema.\n") #
 else:
 	print("O Intervalo escolhido nao atende ao(s) criterio(s) do teorema.\n")
-	flag = 2
 
 listax = [] # Eixo x: Lista utilizada como parametro para printar grafico no pyplot
 listaf = [] # Eixo y (ou f(x) se preferir): Idem
@@ -42,11 +39,12 @@ for i in range(int(x1),int(x2)+1):
 	listaf.append(f)	
 	listax.append(i)
 
-plt.plot(listax,listaf)
-plt.title('Grafico do Intervalo escolhido')
-plt.xlabel('Eixo x [x1,x2]')
-plt.ylabel('Eixo y [f(x1), f(x2)]')
-plt.show()
+plt.plot(listax,listaf) # A biblioteca plot estou usando para gerar o grafico, apesar de nao o ter usado no relatorio
+plt.title('Grafico do Intervalo escolhido') # Define um titulo para o grafico
+plt.xlabel('Eixo x [x1,x2]') # Define um rotulo para o eixo x
+plt.ylabel('Eixo y [f(x1), f(x2)]') # Idem para o eixo y
+plt.show() # Faz o plot do Grafico com as devidas definicoes
+
 
 print("###############################################################################################################################\n")
 # Item b) a partir daqui.
@@ -67,10 +65,6 @@ print("Aplicando a operacao logaritmo neperiano em ambos os lados da inequacao, 
 print("Finalmente o numero de iteracoes estimado eh dado por:\n")
 print("k > (ln(x20 - x10) - ln(tolerancia))/ ln(2)\n")
 
-def numIterac(x1,x2,tol):	
-	k = (mt.log(mt.exp(x2-x1)) - mt.log(mt.exp(tol)))/mt.log(mt.exp(2))
-	k = int(k)+1
-	return k
 
 # define uma funcao para que possa ser chamada posteriormente (item c))
 def bisseccao(z1,z2,tole,imax):		
@@ -79,25 +73,24 @@ def bisseccao(z1,z2,tole,imax):
 	if(funz1*funz2 < 0): 
 		i = 1
 		pmedio = (z1 + z2)/2 # define o ponto medio para o metodo
-		while( i <= imax ):		
+		while( i < imax and (z2-z1 > tole)):		
 			funpmedio = (mt.exp(pmedio*a) - mt.exp((a-1)*pmedio) - b) #funcao func = f(pmedio)
-			if( funpmedio == 0 or (z2-z1)/2 < tole ):			
-				return pmedio
+			if( funpmedio == 0 or (z2-z1 < tole)):			
+				return (pmediox, i) # Retorna ponto medio e o numero de iterações realizadas
 					
-			if( funz1*funpmedio < 0 ):
+			if( funz1*funpmedio < 0 ): # Verificacao do teorema de Bolzano para n iterações
 				z2 = pmedio
-			else:
+			else: # Se a raiz nao esta entre f(x1) e f(xmedio), entao ela esta entre f(xmedio) e f(x2)
 				z1 = pmedio
-			pmedio = (z1+z2)/2
+			pmedio = (z1+z2)/2 # recalculo do ponto medio
 			i += 1
-		return pmedio
+		return (pmedio, i)
 	else:
 		print("Nao ha raizes no intervalo ")	
-		#return None
+		return None,[]
 
-print("METODO DA BISSECCAO")
-imaxi = numIterac(x1,x2,tol)		
-result = bisseccao(x1,x2,tol,imaxi)
+print("METODO DA BISSECCAO")		
+result, nItera = bisseccao(x1,x2,tol,20)
 print("Raiz encontrada = " + str(result))
 print()	
 
@@ -119,13 +112,13 @@ def newton(x0, tole, imax):
 			x1 = (x0 - (mt.exp(x0*a) - mt.exp((a-1)*x0) - b)/((a*mt.exp(a*x0)) - ((a-1)*mt.exp((a-1)*x0))))
 			i += 1
 		else:
-			return None, None
+			return None, []
 	return (x1, i)
 
 print("METODO DE NEWTON-RAPHSON\n")
 print("Digite o valor de aproximacao inicial x0 para encontrar ou nao uma raiz da funcao:\n")
 x0 = float(input("Valor de x0: "))
-result, nInt = newton(x0,tol,imaxi)
+result, nInt = newton(x0,tol,20)
 print("Raiz encontrada = " + str(result))
 print()
 
@@ -143,9 +136,8 @@ while(j < l):
 	print("Insira na ordem: x1 valor do intervalo e x2 valor do intervalo: ")	
 	x11 = float(input("valor x1: "))
 	x22 = float(input("valor x2: "))
-	itera = numIterac(x11,x22,tol)
-	r = bisseccao(x11,x22,tol,itera)
-	liInter =[x11,x22,r,itera]
+	r, nIteracoes = bisseccao(x11,x22,tol,20)
+	liInter =[x11,x22,r,nIteracoes]
 	dTabInter.append(liInter)	
 	j+=1	
 
@@ -164,15 +156,15 @@ for i in range(0,l):
 
 	print("         {}        |".format(dTabInter[i][3]))
 
-#Metodo de Newton : Erick
+#Metodo de Newton :
 
 dTabNewton = []
 j = 0
 while(j < l):
 	print("Insira na ordem: x1 valor do intervalo e x2 valor do intervalo: ")	
 	x0 = float(input("valor x0: "))
-	x1, nInt = newton(x0,tol,itera)
-	liNewton =[x0,x1,nInt]
+	x1, numInt = newton(x0,tol,20)
+	liNewton =[x0,x1,numInt]
 	dTabNewton.append(liNewton)	
 	j+=1	
 
@@ -186,9 +178,6 @@ for i in range(0,l):
 		print("           None            |", end="")
 	else:
 		print("         {0:.7f}           |".format(dTabNewton[i][2]), end="")
-
-
-#comment: github repo
 
 
 
